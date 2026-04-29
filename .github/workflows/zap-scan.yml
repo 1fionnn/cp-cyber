@@ -18,7 +18,13 @@ jobs:
         run: sleep 10
 
       - name: Rodar ZAP
-        run: docker run --network=host --rm -v $(pwd):/zap/wrk/:rw owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080 -r report.html
+        run: |
+             docker run --rm 
+             -v $(pwd):/zap/wrk/:rw 
+             -t owasp/zap2docker-stable zap-baseline.py 
+             -t http://127.0.0.1:8080 
+             -r zap-report.html
+
 
       - name: Upload relatório
         uses: actions/upload-artifact@v4
