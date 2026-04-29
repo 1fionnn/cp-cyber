@@ -24,11 +24,21 @@ jobs:
 
       - name: Rodar ZAP
         run: |
+         docker network create zapnet
+
+         docker run -d \
+         --name app \
+         --network zapnet \
+          -p 8080:80 nginx
+
+         sleep 15
+
          docker run --rm \
+         --network zapnet \
          -v $(pwd):/zap/wrk \
          ghcr.io/zaproxy/zaproxy:stable \
          zap-baseline.py \
-         -t http://host.docker.internal:8080 \
+         -t http://app \
          -r zap-report.html
 
       - name: Verificar arquivos
