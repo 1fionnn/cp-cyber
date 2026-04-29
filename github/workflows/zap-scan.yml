@@ -1,0 +1,27 @@
+name: ZAP Scan
+
+on:
+  push:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Subir app
+        run: docker run -d -p 8080:80 nginx
+
+      - name: Esperar app
+        run: sleep 10
+
+      - name: Rodar ZAP
+        run: docker run --network=host --rm -v $(pwd):/zap/wrk/:rw owasp/zap2docker-stable zap-baseline.py -t http://localhost:8080 -r report.html
+
+      - name: Upload relatório
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: report.html
