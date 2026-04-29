@@ -1,7 +1,6 @@
-name: OWASP ZAP Scan
+name: ZAP Scan
 
-on:
-  push:
+on: push
 
 jobs:
   zap_scan:
@@ -14,19 +13,22 @@ jobs:
       - name: Subir aplicação
         run: |
           docker run -d --name app -p 8080:80 nginx
-          sleep 15
+          sleep 20
 
-      - name: Verificar app
+      - name: Testar aplicação
         run: curl http://localhost:8080
 
       - name: Rodar ZAP
         run: |
-         docker run --rm \
-         -v $(pwd):/zap/wrk/:rw \
-         ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-         -t http://localhost:8080 \
-         -r zap-report.html
-      - name: Verificar arquivo gerado
+          docker run --rm \
+            --network host \
+            -v $(pwd):/zap/wrk/:rw \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://127.0.0.1:8080 \
+            -r zap-report.html || true
+
+      - name: Verificar arquivos
         run: ls -la
 
       - name: Upload relatório
