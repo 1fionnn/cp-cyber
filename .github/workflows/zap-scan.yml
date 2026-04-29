@@ -21,11 +21,16 @@ jobs:
       - name: Rodar ZAP
         run: |
          docker run --rm \
-          -v $(pwd):/zap/wrk/:rw \
+         -v $(pwd):/zap/wrk \
          ghcr.io/zaproxy/zaproxy:stable \
          zap-baseline.py \
          -t http://127.0.0.1:8080 \
-         -r /zap/wrk/zap-report.html || true
+         -r zap-report.html \
+         -J zap-report.json \
+         -x zap-report.xml
+
+      - name: Garantir que arquivo existe
+        run: ls -la
 
       - name: Verificar arquivos
         run: ls -la
