@@ -18,15 +18,18 @@ jobs:
       - name: Testar app
         run: curl http://localhost:8080
 
+      - name: Preparar diretório
+        run: |
+         chmod -R 777 .
+
       - name: Rodar ZAP
         run: |
-          docker run --rm \
-            --network host \
-            -v $(pwd):/zap/wrk \
-            ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py \
-            -t http://localhost:8080 \
-            -r zap-report.html
+         docker run --rm \
+         -v $(pwd):/zap/wrk \
+         ghcr.io/zaproxy/zaproxy:stable \
+         zap-baseline.py \
+         -t http://host.docker.internal:8080 \
+         -r zap-report.html
 
       - name: Verificar arquivos
         run: ls -la
