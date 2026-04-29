@@ -21,12 +21,11 @@ jobs:
       - name: Rodar ZAP
         run: |
          docker run --rm \
-         --network host \
-         -v $(pwd):/zap/wrk/:rw \
+          -v $(pwd):/zap/wrk/:rw \
          ghcr.io/zaproxy/zaproxy:stable \
          zap-baseline.py \
          -t http://127.0.0.1:8080 \
-         -r zap-report.html || true
+         -r /zap/wrk/zap-report.html || true
 
       - name: Verificar arquivos
         run: ls -la
@@ -36,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: zap-report
-         path: ./zap-report.html
+         path: zap-report.html
