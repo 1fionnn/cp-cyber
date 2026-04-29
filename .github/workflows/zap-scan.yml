@@ -8,27 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Subir aplicação
-        run: docker run -d -p 8080:80 nginx
+        run: |
+          docker run -d --name app -p 8080:80 nginx
+          sleep 15
 
-      - name: Esperar aplicação iniciar
-        run: sleep 20
+      - name: Verificar app
+        run: curl http://localhost:8080
 
-      - name: Rodar ZAP Baseline Scan
+      - name: Rodar ZAP
         run: |
           docker run --rm \
+            --network host \
             -v $(pwd):/zap/wrk/:rw \
             owasp/zap2docker-stable zap-baseline.py \
             -t http://localhost:8080 \
             -r zap-report.html
 
-      - name: Verificar arquivos gerados
+      - name: Verificar arquivo gerado
         run: ls -la
 
-      - name: Upload relatório ZAP
+      - name: Upload relatório
         if: always()
         uses: actions/upload-artifact@v4
         with:
