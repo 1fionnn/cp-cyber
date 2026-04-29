@@ -10,34 +10,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Subir aplicação
+      - name: Subir app
         run: |
           docker run -d --name app -p 8080:80 nginx
           sleep 20
 
-      - name: Testar aplicação
+      - name: Testar app
         run: curl http://localhost:8080
 
       - name: Rodar ZAP
         run: |
-         docker run --rm \
-         -v $(pwd):/zap/wrk \
-         ghcr.io/zaproxy/zaproxy:stable \
-         zap-baseline.py \
-         -t http://127.0.0.1:8080 \
-         -r zap-report.html \
-         -J zap-report.json \
-         -x zap-report.xml
-
-      - name: Garantir que arquivo existe
-        run: ls -la
+          docker run --rm \
+            --network host \
+            -v $(pwd):/zap/wrk \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:8080 \
+            -r zap-report.html
 
       - name: Verificar arquivos
         run: ls -la
 
-      - name: Upload relatório ZAP
+      - name: Upload relatório
         if: always()
         uses: actions/upload-artifact@v4
         with:
-         name: zap-report
-         path: zap-report.html
+          name: zap-report
+          path: zap-report.html
