@@ -20,13 +20,13 @@ jobs:
 
       - name: Rodar ZAP
         run: |
-          docker run --rm \
-            --network host \
-            -v $(pwd):/zap/wrk/:rw \
-            ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py \
-            -t http://127.0.0.1:8080 \
-            -r zap-report.html || true
+         docker run --rm \
+         --network host \
+         -v $(pwd):/zap/wrk/:rw \
+         ghcr.io/zaproxy/zaproxy:stable \
+         zap-baseline.py \
+         -t http://127.0.0.1:8080 \
+         -r zap-report.html || true
 
       - name: Verificar arquivos
         run: ls -la
