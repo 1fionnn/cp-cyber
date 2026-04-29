@@ -24,12 +24,14 @@ jobs:
 
       - name: Rodar ZAP
         run: |
-         docker network create zapnet
+         docker network create zapnet || true
+
+         docker rm -f app || true
 
          docker run -d \
          --name app \
          --network zapnet \
-          -p 8080:80 nginx
+         nginx
 
          sleep 15
 
